@@ -20,10 +20,11 @@
     self.progressView =[[PHCycleView alloc]initWithFrame:CGRectMake(0, 0, 130, 130)];
     self.progressView.center = self.view.center;
     self.progressView.backgroundColor = [UIColor clearColor];
-    [self.progressView setProgressColor:[UIColor blueColor]];
     self.progressView.progressFont = [UIFont systemFontOfSize:30];
     [self.view addSubview:self.progressView];
-    [self.progressView updateProgress:50];
+    //先设置进度 在进度条设置颜色
+    [self.progressView updateProgress:0.5];
+    [self.progressView setProgressColor:[UIColor blueColor]];
     [self.progressView setLinePreAngle:15 lineSize:CGSizeMake(3, 10) color:[UIColor redColor]];
     self.progressView.describeFont = [UIFont systemFontOfSize:12];
     self.progressView.describeStr = @"历史最高分";

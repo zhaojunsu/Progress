@@ -10,6 +10,7 @@
 
 #define kBorderWith 10
 #define center CGPointMake(self.bounds.size.width / 2.0, self.bounds.size.height / 2.0)
+#define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)//角都转弧度
 
 @interface PHCycleView()
 
@@ -33,8 +34,8 @@
 }
 
 -(void)drawProgress{
-    self.transform = CGAffineTransformMakeRotation(-M_PI/0.8);
-    UIBezierPath *outsidePath = [UIBezierPath bezierPathWithArcCenter:center radius:(self.bounds.size.width - 5)/ 2.0+8 startAngle:-M_PI_2 endAngle:M_PI * 3.0 / 2.0 clockwise:YES];
+    
+    UIBezierPath *outsidePath = [UIBezierPath bezierPathWithArcCenter:center radius:(self.bounds.size.width - 5)/ 2.0+8 startAngle:DEGREES_TO_RADIANS(130) endAngle:DEGREES_TO_RADIANS(130) + DEGREES_TO_RADIANS(280) clockwise:YES];
 // 内圈
     UIBezierPath *insidePath = [UIBezierPath bezierPathWithArcCenter:center radius:(self.bounds.size.width - 30)/ 2.0 startAngle:-M_PI_2 endAngle:M_PI * 3.0 / 2.0 clockwise:YES];
     CAShapeLayer *insideLayer = [CAShapeLayer layer];
@@ -49,29 +50,26 @@
     self.outLayer.strokeColor = [UIColor colorWithRed:0 green:0 blue:255 alpha:0.3].CGColor;
     self.outLayer.fillColor =  [UIColor clearColor].CGColor;
     self.outLayer.path = outsidePath.CGPath;
-    self.outLayer.strokeStart = M_PI/12;
-    self.outLayer.strokeEnd = 1;
     [self.layer addSublayer:self.outLayer];
 
     // 进度条
-    self.progressLayer = [CAShapeLayer layer];
-    self.progressLayer.fillColor = [UIColor clearColor].CGColor;
-    self.progressLayer.lineWidth = 3;
-    self.progressLayer.strokeStart = M_PI/12;
-    self.progressLayer.path = outsidePath.CGPath;
-    [self.layer addSublayer:self.progressLayer];
+//    self.progressLayer = [CAShapeLayer layer];
+//    self.progressLayer.fillColor = [UIColor clearColor].CGColor;
+//    self.progressLayer.lineWidth = 3;
+//    self.progressLayer.strokeStart = M_PI/12;
+//    self.progressLayer.path = outsidePath.CGPath;
+//    [self.layer addSublayer:self.progressLayer];
 
     // 进度Label
+    // 进度Label
     self.progressLabel = [UILabel new];
-    self.progressLabel.transform = CGAffineTransformMakeRotation(M_PI/0.8);
-    self.progressLabel.frame = CGRectMake(10,55,self.frame.size.width-100 ,40);
+    self.progressLabel.frame = CGRectMake(0,30,self.frame.size.width ,40);
     self.progressLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:self.progressLabel];
 
     //描述Label
     self.describeLabel = [UILabel new];
-    self.describeLabel.transform = CGAffineTransformMakeRotation(M_PI/0.8);
-    self.describeLabel.frame = CGRectMake(30, 40, self.frame.size.width - 100, 30);
+    self.describeLabel.frame = CGRectMake(0, 70, self.frame.size.width , 30);
     self.describeLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:self.describeLabel];
 }
@@ -114,7 +112,14 @@
     [CATransaction begin];
     [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn]];
     [CATransaction setAnimationDuration:0.5];
-    self.progressLayer.strokeEnd =  (progress + 13) / 100.0;
+    CGFloat endAngle = 0;
+    endAngle = DEGREES_TO_RADIANS(130) + DEGREES_TO_RADIANS(280)*progress;
+    self.progressLayer = [CAShapeLayer layer];
+    self.progressLayer.fillColor = [UIColor clearColor].CGColor;
+    self.progressLayer.lineWidth = 3;
+    [self.layer addSublayer:self.progressLayer];
+    UIBezierPath *outsidePath = [UIBezierPath bezierPathWithArcCenter:center radius:(self.bounds.size.width - 5)/ 2.0+8 startAngle:DEGREES_TO_RADIANS(130) endAngle:endAngle clockwise:YES];
+    self.progressLayer.path = outsidePath.CGPath;
     [CATransaction commit];
     
     self.progressLabel.text = [NSString stringWithFormat:@"%.0f",progress];
@@ -150,16 +155,10 @@
     self.outLayer.strokeColor = outLayerColor.CGColor;
 }
 -(void)setLinePreAngle:(CGFloat)preAngle lineSize:(CGSize)size color:(UIColor *)color{
-    
-    //    CALayer* linesLayer = [self _createLinesLayerWithFrame:self.bounds
-    //                                                  preAngle:15
-    //                                                  lineSize:CGSizeMake(3, 10)
-    //                                                     color:[UIColor colorWithWhite:1 alpha:0.5]];
     CALayer* linesLayer = [self _createLinesLayerWithFrame:self.bounds
                                                   preAngle:preAngle
                                                   lineSize:size
                                                      color:color];
-    linesLayer.transform = CATransform3DRotate(linesLayer.transform, M_PI/0.8, 0, 0, 1);
     [self.layer addSublayer:linesLayer];
 }
 @end
